@@ -5,6 +5,7 @@ from enum import auto
 
 from sqlglot.helper import AutoName
 from sqlglot.trie import in_trie, new_trie
+from typing import Optional
 
 
 class TokenType(AutoName):
@@ -337,8 +338,9 @@ class Token:
         text: str,
         line: int = 1,
         col: int = 1,
-        comments: t.List[str] = [],
+        comments: Optional[t.List[str]] = None,
     ) -> None:
+        comments = [] if comments is None else comments
         self.token_type = token_type
         self.text = text
         self.line = line
