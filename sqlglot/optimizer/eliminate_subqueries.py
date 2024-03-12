@@ -73,8 +73,7 @@ def eliminate_subqueries(expression):
             if scope is cte_scope:
                 # Don't try to eliminate this CTE itself
                 continue
-            new_cte = _eliminate(scope, existing_ctes, taken)
-            if new_cte:
+            if new_cte := _eliminate(scope, existing_ctes, taken):
                 new_ctes.append(new_cte)
 
         # Append the existing CTE itself
@@ -85,8 +84,7 @@ def eliminate_subqueries(expression):
         root.union_scopes, root.subquery_scopes, root.derived_table_scopes
     ):
         for child_scope in scope.traverse():
-            new_cte = _eliminate(child_scope, existing_ctes, taken)
-            if new_cte:
+            if new_cte := _eliminate(child_scope, existing_ctes, taken):
                 new_ctes.append(new_cte)
 
     if new_ctes:

@@ -913,9 +913,9 @@ class Tokenizer(metaclass=_Tokenizer):
 
         comment_start_line = self._line
         comment_start_size = len(comment_start)
-        comment_end = self._COMMENTS[comment_start]  # type: ignore
+# type: ignore
 
-        if comment_end:
+        if comment_end := self._COMMENTS[comment_start]:
             comment_end_size = len(comment_end)
 
             while not self._end and self._chars(comment_end_size) != comment_end:
@@ -1009,8 +1009,8 @@ class Tokenizer(metaclass=_Tokenizer):
         return self._text
 
     def _scan_string(self, quote: str) -> bool:
-        quote_end = self._QUOTES.get(quote)  # type: ignore
-        if quote_end is None:
+# type: ignore
+        if (quote_end := self._QUOTES.get(quote)) is None:
             return False
 
         self._advance(len(quote))

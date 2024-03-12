@@ -92,10 +92,9 @@ class Step:
             A Step DAG corresponding to `expression`.
         """
         ctes = ctes or {}
-        with_ = expression.args.get("with")
 
         # CTEs break the mold of scope and introduce themselves to all in the context.
-        if with_:
+        if with_ := expression.args.get("with"):
             ctes = ctes.copy()
             for cte in with_.expressions:
                 step = Step.from_expression(cte.this, ctes)
@@ -117,9 +116,8 @@ class Step:
         else:
             step = Scan()
 
-        joins = expression.args.get("joins")
 
-        if joins:
+        if joins := expression.args.get("joins"):
             join = Join.from_joins(joins, ctes)
             join.name = step.name
             join.add_dependency(step)
@@ -147,9 +145,8 @@ class Step:
             else:
                 projections.append(e)
 
-        where = expression.args.get("where")
 
-        if where:
+        if where := expression.args.get("where"):
             step.condition = where.this
 
         group = expression.args.get("group")
@@ -181,9 +178,8 @@ class Step:
             aggregate.add_dependency(step)
             step = aggregate
 
-        order = expression.args.get("order")
 
-        if order:
+        if order := expression.args.get("order"):
             sort = Sort()
             sort.name = step.name
             sort.key = order.expressions
@@ -203,9 +199,8 @@ class Step:
             distinct.add_dependency(step)
             step = distinct
 
-        limit = expression.args.get("limit")
 
-        if limit:
+        if limit := expression.args.get("limit"):
             step.limit = int(limit.text("expression"))
 
         return step
@@ -229,9 +224,8 @@ class Step:
         indent = "  " * level
         nested = f"{indent}    "
 
-        context = self._to_s(f"{nested}  ")
 
-        if context:
+        if context := self._to_s(f"{nested}  "):
             context = [f"{nested}Context:"] + context
 
         lines = [

@@ -422,8 +422,7 @@ class Generator:
         return f"{'' if expression.args.get('allow_null') else 'NOT '}NULL"
 
     def primarykeycolumnconstraint_sql(self, expression: exp.PrimaryKeyColumnConstraint) -> str:
-        desc = expression.args.get("desc")
-        if desc is not None:
+        if (desc := expression.args.get("desc")) is not None:
             return f"PRIMARY KEY{' DESC' if desc else ' ASC'}"
         return f"PRIMARY KEY"
 
@@ -445,15 +444,13 @@ class Generator:
         unique = " UNIQUE" if expression.args.get("unique") else ""
         materialized = " MATERIALIZED" if expression.args.get("materialized") else ""
         properties = self.sql(expression, "properties")
-        data = expression.args.get("data")
-        if data is None:
+        if (data := expression.args.get("data")) is None:
             data = ""
         elif data:
             data = " WITH DATA"
         else:
             data = " WITH NO DATA"
-        statistics = expression.args.get("statistics")
-        if statistics is None:
+        if (statistics := expression.args.get("statistics")) is None:
             statistics = ""
         elif statistics:
             statistics = " AND STATISTICS"
@@ -503,8 +500,7 @@ class Generator:
         return f"DESCRIBE {self.sql(expression, 'this')}"
 
     def prepend_ctes(self, expression: exp.Expression, sql: str) -> str:
-        with_ = self.sql(expression, "with")
-        if with_:
+        if with_ := self.sql(expression, "with"):
             sql = f"{with_}{self.sep()}{sql}"
         return sql
 
@@ -660,8 +656,7 @@ class Generator:
         return self.properties(properties, prefix=self.seg("WITH"))
 
     def property_sql(self, expression: exp.Property) -> str:
-        property_cls = expression.__class__
-        if property_cls == exp.Property:
+        if (property_cls := expression.__class__) == exp.Property:
             return f"{expression.name}={self.sql(expression, 'value')}"
 
         property_name = exp.Properties.PROPERTY_TO_NAME.get(property_cls)
@@ -1024,8 +1019,7 @@ class Generator:
 
     def sessionparameter_sql(self, expression: exp.SessionParameter) -> str:
         this = self.sql(expression, "this")
-        kind = expression.text("kind")
-        if kind:
+        if kind := expression.text("kind"):
             kind = f"{kind}."
         return f"@@{kind}{this}"
 
@@ -1144,9 +1138,8 @@ class Generator:
             statements.append(f"WHEN {self.sql(e, 'this')}")
             statements.append(f"THEN {self.sql(e, 'true')}")
 
-        default = self.sql(expression, "default")
 
-        if default:
+        if default := self.sql(expression, "default"):
             statements.append(f"ELSE {default}")
 
         statements.append("END")
@@ -1167,9 +1160,8 @@ class Generator:
         return f"EXTRACT({this} FROM {expression_sql})"
 
     def trim_sql(self, expression: exp.Trim) -> str:
-        trim_type = self.sql(expression, "position")
 
-        if trim_type == "LEADING":
+        if (trim_type := self.sql(expression, "position")) == "LEADING":
             return f"{self.normalize_func('LTRIM')}({self.format_args(expression.this)})"
         elif trim_type == "TRAILING":
             return f"{self.normalize_func('RTRIM')}({self.format_args(expression.this)})"
@@ -1320,8 +1312,7 @@ class Generator:
         return "BEGIN"
 
     def commit_sql(self, expression: exp.Commit) -> str:
-        chain = expression.args.get("chain")
-        if chain is not None:
+        if (chain := expression.args.get("chain")) is not None:
             chain = " AND CHAIN" if chain else " AND NO CHAIN"
 
         return f"COMMIT{chain or ''}"
@@ -1334,16 +1325,14 @@ class Generator:
     def altercolumn_sql(self, expression: exp.AlterColumn) -> str:
         this = self.sql(expression, "this")
 
-        dtype = self.sql(expression, "dtype")
-        if dtype:
+        if dtype := self.sql(expression, "dtype"):
             collate = self.sql(expression, "collate")
             collate = f" COLLATE {collate}" if collate else ""
             using = self.sql(expression, "using")
             using = f" USING {using}" if using else ""
             return f"ALTER COLUMN {this} TYPE {dtype}{collate}{using}"
 
-        default = self.sql(expression, "default")
-        if default:
+        if default := self.sql(expression, "default"):
             return f"ALTER COLUMN {this} SET DEFAULT {default}"
 
         if not expression.args.get("drop"):

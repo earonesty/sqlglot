@@ -186,11 +186,10 @@ class DataFrame:
             hint_expression.args.get("expressions").append(hint)
             df.pending_hints.remove(hint)
 
-        join_aliases = {
+        if join_aliases := {
             join_table.alias_or_name
             for join_table in get_tables_from_expression_with_join(expression)
-        }
-        if join_aliases:
+        }:
             for hint in df.pending_join_hints:
                 for sequence_id_expression in hint.expressions:
                     sequence_id_or_name = sequence_id_expression.alias_or_name
@@ -249,8 +248,7 @@ class DataFrame:
     @classmethod
     def _add_ctes_to_expression(cls, expression: exp.Select, ctes: t.List[exp.CTE]) -> exp.Select:
         expression = expression.copy()
-        with_expression = expression.args.get("with")
-        if with_expression:
+        if with_expression := expression.args.get("with"):
             existing_ctes = with_expression.expressions
             existsing_cte_names = {x.alias_or_name for x in existing_ctes}
             for cte in ctes:
@@ -279,8 +277,7 @@ class DataFrame:
         ] = []
         main_select_ctes: t.List[exp.CTE] = []
         for cte in self.expression.ctes:
-            cache_storage_level = cte.args.get("cache_storage_level")
-            if cache_storage_level:
+            if cache_storage_level := cte.args.get("cache_storage_level"):
                 select_expression = cte.this.copy()
                 select_expression.set("with", exp.With(expressions=copy(main_select_ctes)))
                 select_expression.set("cte_alias_name", cte.alias_or_name)
@@ -707,10 +704,9 @@ class DataFrame:
     def withColumn(self, colName: str, col: Column) -> DataFrame:
         col = self._ensure_and_normalize_col(col)
         existing_col_names = self.expression.named_selects
-        existing_col_index = (
+        if existing_col_index := (
             existing_col_names.index(colName) if colName in existing_col_names else None
-        )
-        if existing_col_index:
+        ):
             expression = self.expression.copy()
             expression.expressions[existing_col_index] = col.expression
             return self.copy(expression=expression)

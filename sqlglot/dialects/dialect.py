@@ -278,8 +278,7 @@ def no_properties_sql(self, expression):
 def str_position_sql(self, expression):
     this = self.sql(expression, "this")
     substr = self.sql(expression, "substr")
-    position = self.sql(expression, "position")
-    if position:
+    if position := self.sql(expression, "position"):
         return f"STRPOS(SUBSTR({this}, {position}), {substr}) + {position} - 1"
     return f"STRPOS({this}, {substr})"
 

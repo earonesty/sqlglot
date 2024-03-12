@@ -259,9 +259,8 @@ class MappingSchema(AbstractMappingSchema[t.Dict[str, str]], Schema):
 
     def column_names(self, table: exp.Table | str, only_visible: bool = False) -> t.List[str]:
         table_ = self._ensure_table(table)
-        schema = self.find(table_)
 
-        if schema is None:
+        if (schema := self.find(table_)) is None:
             raise SchemaError(f"Could not find table schema {table}")
 
         if not only_visible or not self.visible:
@@ -272,10 +271,8 @@ class MappingSchema(AbstractMappingSchema[t.Dict[str, str]], Schema):
 
     def get_column_type(self, table: exp.Table | str, column: exp.Column | str) -> exp.DataType:
         column_name = column if isinstance(column, str) else column.name
-        table_ = exp.to_table(table)
-        if table_:
-            table_schema = self.find(table_, raise_on_missing=False)
-            if table_schema:
+        if table_ := exp.to_table(table):
+            if table_schema := self.find(table_, raise_on_missing=False):
                 column_type = table_schema.get(column_name)
 
                 if isinstance(column_type, exp.DataType):
@@ -364,8 +361,8 @@ def _nested_get(
         The value or None if it doesn't exist.
     """
     for name, key in path:
-        d = d.get(key)  # type: ignore
-        if d is None:
+# type: ignore
+        if (d := d.get(key)) is None:
             if raise_on_missing:
                 name = "table" if name == "this" else name
                 raise ValueError(f"Unknown {name}: {key}")

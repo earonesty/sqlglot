@@ -544,9 +544,8 @@ class DerivedTable(Expression):
 
     @property
     def selects(self):
-        alias = self.args.get("alias")
 
-        if alias:
+        if alias := self.args.get("alias"):
             return alias.columns
         return []
 
@@ -1249,8 +1248,7 @@ class Properties(Expression):
     def from_dict(cls, properties_dict) -> Properties:
         expressions = []
         for key, value in properties_dict.items():
-            property_cls = cls.NAME_TO_PROPERTY.get(key.upper())
-            if property_cls:
+            if property_cls := cls.NAME_TO_PROPERTY.get(key.upper()):
                 expressions.append(property_cls(this=convert(value)))
             else:
                 expressions.append(Property(this=Literal.string(key), value=convert(value)))

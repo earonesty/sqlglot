@@ -181,8 +181,7 @@ class PythonExecutor:
                     for name, column_range in column_ranges.items()
                 }
             )
-            condition = self.generate(join["condition"])
-            if condition:
+            if condition := self.generate(join["condition"]):
                 source_context.filter(condition)
 
         condition = self.generate(step.condition)
@@ -254,9 +253,8 @@ class PythonExecutor:
     def aggregate(self, step, context):
         group_by = self.generate_tuple(step.group.values())
         aggregations = self.generate_tuple(step.aggregations)
-        operands = self.generate_tuple(step.operands)
 
-        if operands:
+        if operands := self.generate_tuple(step.operands):
             operand_table = Table(self.table(step.operands).columns)
 
             for reader, ctx in context:

@@ -442,9 +442,8 @@ def extract_interval(interval):
         return None
 
     n = int(interval.name)
-    unit = interval.text("unit").lower()
 
-    if unit == "year":
+    if (unit := interval.text("unit").lower()) == "year":
         return relativedelta(years=n)
     if unit == "month":
         return relativedelta(months=n)
@@ -473,9 +472,8 @@ def _flat_simplify(expression, simplifier):
         a = queue.popleft()
 
         for b in queue:
-            result = simplifier(expression, a, b)
 
-            if result:
+            if result := simplifier(expression, a, b):
                 queue.remove(b)
                 queue.append(result)
                 break

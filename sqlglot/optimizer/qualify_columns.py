@@ -50,8 +50,7 @@ def _pop_table_column_aliases(derived_tables):
     for derived_table in derived_tables:
         if isinstance(derived_table.unnest(), exp.UDTF):
             continue
-        table_alias = derived_table.args.get("alias")
-        if table_alias:
+        if table_alias := derived_table.args.get("alias"):
             table_alias.args.pop("columns", None)
 
 
@@ -233,9 +232,8 @@ def _qualify_columns(scope, resolver):
                 columns_missing_from_scope.append(column)
 
     for column in columns_missing_from_scope:
-        column_table = resolver.get_table(column.name)
 
-        if column_table is None:
+        if (column_table := resolver.get_table(column.name)) is None:
             raise OptimizeError(f"Ambiguous column: {column.name}")
 
         column.set("table", exp.to_identifier(column_table))

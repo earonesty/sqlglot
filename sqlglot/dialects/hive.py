@@ -86,8 +86,7 @@ def _str_to_time(self, expression):
 
 
 def _time_format(self, expression):
-    time_format = self.format_time(expression)
-    if time_format == Hive.time_format:
+    if (time_format := self.format_time(expression)) == Hive.time_format:
         return None
     return time_format
 

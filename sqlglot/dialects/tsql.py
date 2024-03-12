@@ -63,8 +63,7 @@ def _format_time_lambda(exp_class, full_format_mapping=None, default=None):
 
 def _parse_format(args):
     fmt = seq_get(args, 1)
-    number_fmt = fmt.name in TRANSPILE_SAFE_NUMBER_FMT or not DATE_FMT_RE.search(fmt.this)
-    if number_fmt:
+    if number_fmt := fmt.name in TRANSPILE_SAFE_NUMBER_FMT or not DATE_FMT_RE.search(fmt.this):
         return exp.NumberToStr(this=seq_get(args, 0), format=fmt)
     return exp.TimeToStr(
         this=seq_get(args, 0),
@@ -108,8 +107,7 @@ def _string_agg_sql(self, e):
     e = e.copy()
 
     this = e.this
-    distinct = e.find(exp.Distinct)
-    if distinct:
+    if distinct := e.find(exp.Distinct):
         # exp.Distinct can appear below an exp.Order or an exp.GroupConcat expression
         self.unsupported("T-SQL STRING_AGG doesn't support DISTINCT.")
         this = distinct.expressions[0]
@@ -402,8 +400,7 @@ class TSQL(Dialect):
         }
 
         def systemtime_sql(self, expression: exp.SystemTime) -> str:
-            kind = expression.args["kind"]
-            if kind == "ALL":
+            if (kind := expression.args["kind"]) == "ALL":
                 return "FOR SYSTEM_TIME ALL"
 
             start = self.sql(expression, "this")

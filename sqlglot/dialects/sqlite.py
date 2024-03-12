@@ -20,8 +20,7 @@ def _fetch_sql(self, expression):
 # https://www.sqlite.org/lang_aggfunc.html#group_concat
 def _group_concat_sql(self, expression):
     this = expression.this
-    distinct = expression.find(exp.Distinct)
-    if distinct:
+    if distinct := expression.find(exp.Distinct):
         this = distinct.expressions[0]
         distinct = "DISTINCT "
 

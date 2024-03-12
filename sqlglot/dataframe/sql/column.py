@@ -19,8 +19,7 @@ class Column:
         elif expression is None or not isinstance(expression, (str, exp.Expression)):
             expression = self._lit(expression).expression  # type: ignore
 
-        expression = sqlglot.maybe_parse(expression, dialect="spark")
-        if expression is None:
+        if (expression := sqlglot.maybe_parse(expression, dialect="spark")) is None:
             raise ValueError(f"Could not parse {expression}")
         self.expression: exp.Expression = expression
 

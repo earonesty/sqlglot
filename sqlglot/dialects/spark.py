@@ -23,8 +23,7 @@ def _map_sql(self, expression):
 
 def _str_to_date(self, expression):
     this = self.sql(expression, "this")
-    time_format = self.format_time(expression)
-    if time_format == Hive.date_format:
+    if (time_format := self.format_time(expression)) == Hive.date_format:
         return f"TO_DATE({this})"
     return f"TO_DATE({this}, {time_format})"
 

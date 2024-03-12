@@ -63,8 +63,7 @@ def if_sql(self, expression):
 
 def _str_to_date(self, expression):
     this = self.sql(expression, "this")
-    time_format = self.format_time(expression)
-    if time_format == Drill.date_format:
+    if (time_format := self.format_time(expression)) == Drill.date_format:
         return f"CAST({this} AS DATE)"
     return f"TO_DATE({this}, {time_format})"
 
