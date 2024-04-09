@@ -425,7 +425,7 @@ class Generator:
         desc = expression.args.get("desc")
         if desc is not None:
             return f"PRIMARY KEY{' DESC' if desc else ' ASC'}"
-        return f"PRIMARY KEY"
+        return "PRIMARY KEY"
 
     def uniquecolumnconstraint_sql(self, _) -> str:
         return "UNIQUE"
@@ -1483,7 +1483,7 @@ class Generator:
     def format_args(self, *args: t.Optional[str | exp.Expression]) -> str:
         arg_sqls = tuple(self.sql(arg) for arg in args if arg is not None)
         if self.pretty and self.text_width(arg_sqls) > self._max_text_width:
-            return self.indent("\n" + f",\n".join(arg_sqls) + "\n", skip_first=True, skip_last=True)
+            return self.indent("\n" + ",\n".join(arg_sqls) + "\n", skip_first=True, skip_last=True)
         return ", ".join(arg_sqls)
 
     def text_width(self, args: t.Iterable) -> int:

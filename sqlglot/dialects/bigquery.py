@@ -195,7 +195,7 @@ class BigQuery(Dialect):
             exp.ReturnsProperty: _returnsproperty_sql,
             exp.Create: _create_sql,
             exp.Trim: lambda self, e: f"TRIM({self.format_args(e.this, e.expression)})",
-            exp.VolatilityProperty: lambda self, e: f"DETERMINISTIC"
+            exp.VolatilityProperty: lambda self, e: "DETERMINISTIC"
             if e.name == "IMMUTABLE"
             else "NOT DETERMINISTIC",
             exp.RegexpLike: rename_func("REGEXP_CONTAINS"),

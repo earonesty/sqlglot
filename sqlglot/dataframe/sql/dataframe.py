@@ -598,7 +598,7 @@ class DataFrame:
             minimum_num_nulls = len(null_check_columns) - minimum_non_null + 1
         if minimum_num_nulls > len(null_check_columns):
             raise RuntimeError(
-                f"The minimum num nulls for dropna must be less than or equal to the number of columns. "
+                "The minimum num nulls for dropna must be less than or equal to the number of columns. "
                 f"Minimum num nulls: {minimum_num_nulls}, Num Columns: {len(null_check_columns)}"
             )
         if_null_checks = [
